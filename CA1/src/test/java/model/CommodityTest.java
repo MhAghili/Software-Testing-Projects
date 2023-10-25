@@ -1,5 +1,11 @@
 package model;
 
+import exceptions.NotInStock;
+import org.junit.Before;
+import org.junit.Test;
+
+import static junit.framework.TestCase.assertEquals;
+
 public class CommodityTest {
     private Commodity commodity;
 
@@ -38,6 +44,6 @@ public class CommodityTest {
     public void testCalcRatingIndirectly() {
         commodity.addRate("user1", 4);
         commodity.addRate("user2", 5);
-        assertEquals(4.5f, commodity.getRating(), 0.01);
+        assertEquals((9 + commodity.getInitRate()) / 3, commodity.getRating(), 0.01);
     }
 }
