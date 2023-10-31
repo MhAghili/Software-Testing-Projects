@@ -27,6 +27,8 @@ public class CommentControllerTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        commentController = new CommentController();
+        commentController.setBaloot(baloot);
     }
 
     @Test
