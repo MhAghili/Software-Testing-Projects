@@ -1,6 +1,6 @@
 package controllers;
 
-import controllers.AuthenticationController;
+
 import exceptions.IncorrectPassword;
 import exceptions.NotExistentUser;
 import exceptions.UsernameAlreadyTaken;
@@ -33,51 +33,43 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void testLoginSuccess() {
-        // Arrange
+    public void testLoginSuccess() throws NotExistentUser, IncorrectPassword {
+
         Map<String, String> input = new HashMap<>();
         input.put("username", "testUser");
         input.put("password", "testPassword");
 
-        // Stub the behavior of Baloot
         Mockito.doNothing().when(baloot).login("testUser", "testPassword");
 
-        // Act
         ResponseEntity<String> response = authenticationController.login(input);
 
-        // Assert
         assertEquals("login successfully!", response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    public void testLoginNotExistentUser() {
-        // Arrange
+    public void testLoginNotExistentUser() throws NotExistentUser, IncorrectPassword {
         Map<String, String> input = new HashMap<>();
         input.put("username", "nonExistentUser");
         input.put("password", "testPassword");
-
-        // Stub the behavior of Baloot to throw NotExistentUser
         Mockito.doThrow(NotExistentUser.class).when(baloot).login("nonExistentUser", "testPassword");
 
-        // Act
         ResponseEntity<String> response = authenticationController.login(input);
 
-        // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    public void testLoginIncorrectPassword() {
-        // Arrange
+    public void testLoginIncorrectPassword() throws NotExistentUser, IncorrectPassword {
+
         Map<String, String> input = new HashMap<>();
         input.put("username", "testUser");
         input.put("password", "incorrectPassword");
 
-        // Stub the behavior of Baloot to throw IncorrectPassword
+
         Mockito.doThrow(IncorrectPassword.class).when(baloot).login("testUser", "incorrectPassword");
 
-        // Act
+
         ResponseEntity<String> response = authenticationController.login(input);
 
         // Assert
@@ -85,8 +77,8 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void testSignupSuccess() {
-        // Arrange
+    public void testSignupSuccess() throws UsernameAlreadyTaken {
+
         Map<String, String> input = new HashMap<>();
         input.put("address", "TestAddress");
         input.put("birthDate", "2000-01-01");
@@ -94,23 +86,22 @@ public class AuthenticationControllerTest {
         input.put("username", "newUser");
         input.put("password", "newPassword");
 
-        // Create a new User object for the test
+
         User newUser = new User("newUser", "newPassword", "test@example.com", "2000-01-01", "TestAddress");
 
-        // Stub the behavior of Baloot
+
         Mockito.doNothing().when(baloot).addUser(newUser);
 
-        // Act
+
         ResponseEntity<String> response = authenticationController.signup(input);
 
-        // Assert
         assertEquals("signup successfully!", response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    public void testSignupUsernameAlreadyTaken() {
-        // Arrange
+    public void testSignupUsernameAlreadyTaken() throws UsernameAlreadyTaken {
+
         Map<String, String> input = new HashMap<>();
         input.put("address", "TestAddress");
         input.put("birthDate", "2000-01-01");
@@ -118,13 +109,13 @@ public class AuthenticationControllerTest {
         input.put("username", "existingUser");
         input.put("password", "newPassword");
 
-        // Create a new User object with an existing username
+
         User newUser = new User("existingUser", "newPassword", "test@example.com", "2000-01-01", "TestAddress");
 
-        // Stub the behavior of Baloot to throw UsernameAlreadyTaken
+
         Mockito.doThrow(UsernameAlreadyTaken.class).when(baloot).addUser(newUser);
 
-        // Act
+
         ResponseEntity<String> response = authenticationController.signup(input);
 
         // Assert
