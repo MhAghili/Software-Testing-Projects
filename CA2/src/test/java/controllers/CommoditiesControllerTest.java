@@ -1,8 +1,10 @@
 package controllers;
 
 import exceptions.NotExistentCommodity;
+import exceptions.NotExistentUser;
 import model.Commodity;
 import model.Comment;
+import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -122,7 +124,7 @@ public class CommoditiesControllerTest {
     }
 
     @Test
-    public void testAddCommodityComment() {
+    public void testAddCommodityComment() throws NotExistentUser {
         String commodityId = "1";
         String username = "testUser";
         String comment = "This is a test comment";
@@ -130,11 +132,47 @@ public class CommoditiesControllerTest {
         input.put("username", username);
         input.put("comment", comment);
 
+
+        User mockUser = new User();
+        Mockito.when(baloot.getUserById(username)).thenReturn(mockUser);
+
+        int commentId = 123;
+        Mockito.when(baloot.generateCommentId()).thenReturn(commentId);
+
+        Comment mockComment = new Comment(commentId, mockUser.getEmail(), mockUser.getUsername(), Integer.parseInt(commodityId), comment);
+
+        Mockito.doNothing().when(baloot).addComment(mockComment);
+
         ResponseEntity<String> response = commoditiesController.addCommodityComment(commodityId, input);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("comment added successfully!", response.getBody());
     }
+    @Test
+    public void testAddCommodityCommentNotExist() throws NotExistentUser {
+        String commodityId = "1";
+        String username = "notExistUser";
+        String comment = "This is a test comment";
+        Map<String, String> input = new HashMap<>();
+        input.put("username", username);
+        input.put("comment", comment);
+
+
+        User mockUser = new User();
+        Mockito.when(baloot.getUserById(username)).thenReturn(mockUser);
+
+        int commentId = 123;
+        Mockito.when(baloot.generateCommentId()).thenReturn(commentId);
+
+        Comment mockComment = new Comment(commentId, mockUser.getEmail(), mockUser.getUsername(), Integer.parseInt(commodityId), comment);
+
+        Mockito.doThrow(NotExistentUser.class).when(baloot).addComment(mockComment);
+
+        ResponseEntity<String> response = commoditiesController.addCommodityComment(commodityId, input);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
 
     @Test
     public void testGetCommodityComment() {
