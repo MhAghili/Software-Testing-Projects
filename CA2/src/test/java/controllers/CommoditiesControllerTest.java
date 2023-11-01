@@ -158,15 +158,7 @@ public class CommoditiesControllerTest {
         input.put("comment", comment);
 
 
-        User mockUser = new User();
-        Mockito.when(baloot.getUserById(username)).thenReturn(mockUser);
-
-        int commentId = 123;
-        Mockito.when(baloot.generateCommentId()).thenReturn(commentId);
-
-        Comment mockComment = new Comment(commentId, mockUser.getEmail(), mockUser.getUsername(), Integer.parseInt(commodityId), comment);
-
-        Mockito.doThrow(NotExistentUser.class).when(baloot).addComment(mockComment);
+        Mockito.when(baloot.getUserById(username)).thenThrow(NotExistentUser.class);
 
         ResponseEntity<String> response = commoditiesController.addCommodityComment(commodityId, input);
 

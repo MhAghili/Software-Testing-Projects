@@ -60,13 +60,15 @@ public class CommoditiesController {
         User user = null;
         try {
             user = baloot.getUserById(username);
-        } catch (NotExistentUser ignored) {
+
+            Comment comment = new Comment(commentId, user.getEmail(), user.getUsername(), Integer.parseInt(id), commentText);
+            baloot.addComment(comment);
+
+            return new ResponseEntity<>("comment added successfully!", HttpStatus.OK);
+        } catch (NotExistentUser e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
 
-        Comment comment = new Comment(commentId, user.getEmail(), user.getUsername(), Integer.parseInt(id), commentText);
-        baloot.addComment(comment);
-
-        return new ResponseEntity<>("comment added successfully!", HttpStatus.OK);
     }
 
     @GetMapping(value = "/commodities/{id}/comment")
