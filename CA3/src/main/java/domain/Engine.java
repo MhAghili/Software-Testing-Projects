@@ -21,7 +21,7 @@ public class Engine {
             }
         }
 
-        if (orderHistory.size() == 0) {
+        if (orderHistory.size() == 0 || count == 0) {
             return 0;
         }
 
